@@ -37,6 +37,7 @@
       - cargo # Rust programming language package manager
       - golang # golang programming language and package manager
       - code # VScode
+      - powershell # VScode
       - fastfetch
       - steam
       - vlc
