@@ -79,20 +79,29 @@
     group: root
     mode: '0644'
 
-- name: Ensure Microsoft repository is present
-  become: true  
-  copy:
-    dest: /etc/yum.repos.d/microsoft.repo
-    content: |
-      [packages-microsoft-com-prod]
-      name=packages-microsoft-com-prod
-      baseurl=https://packages.microsoft.com/yumrepos/microsoft-rhel9.0-prod
-      enabled=1
-      gpgcheck=1
-      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-    owner: root
-    group: root
-    mode: '0644'
+#- name: Ensure Microsoft repository is present
+#  become: true  
+#  copy:
+#    dest: /etc/yum.repos.d/microsoft.repo
+#    content: |
+#      [packages-microsoft-com-prod]
+#      name=packages-microsoft-com-prod
+#      baseurl=https://packages.microsoft.com/yumrepos/microsoft-rhel9.0-prod
+#      enabled=1
+#      gpgcheck=1
+#      gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+#    owner: root
+#    group: root
+#    mode: '0644'
+- name: Add Microsoft repository
+  become: true
+  yum_repository:
+    name: microsoft 
+    description: Microsoft {{ ansible_distribution }} {{ ansible_distribution_major_version }} Prod
+    baseurl: "https://packages.microsoft.com/yumrepos/microsoft-{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}-prod"
+    enabled: true
+    gpgcheck: true
+    gpgkey: "https://packages.microsoft.com/keys/microsoft.asc"
 
 - name: Ensure Sublime Text repository is present
   become: true  
