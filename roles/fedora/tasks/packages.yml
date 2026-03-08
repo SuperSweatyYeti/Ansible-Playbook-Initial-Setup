@@ -32,6 +32,7 @@
       - docker-ce # docker community edition
       - docker-compose-plugin
       - ghostty # Terminal emulator
+      - warp-terminal # Fancy terminal with new workflow and built in AI features
       - yt-dlp # youtube video downloader
       - btrfs-assistant
       - cargo # Rust programming language package manager

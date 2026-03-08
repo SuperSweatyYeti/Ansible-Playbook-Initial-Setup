@@ -256,6 +256,21 @@
     group: root
     mode: '0644'
 
+- name: Add Repo for 'warp' terminal package
+  become: true
+  copy:
+    est: "/etc/yum.repos.d/warpdotdev.repo"
+    content: |
+      [warpdotdev]
+      name=warpdotdev
+      baseurl=https://releases.warp.dev/linux/rpm/stable
+      enabled=1
+      gpgcheck=1
+      gptkey=https://releases.warp.dev/linux/keys/warp.asc
+    owner: root
+    group: root
+    mode: '0644'
+
 # - name: Add Ghostty COPR repo
 #   become: true
 #   copy:
