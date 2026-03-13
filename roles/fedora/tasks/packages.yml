@@ -16,6 +16,7 @@
       - unzip
       - fd-find
       - ripgrep
+      - chafa # tool to see images in terminal
       - make
       - automake
       - gcc
