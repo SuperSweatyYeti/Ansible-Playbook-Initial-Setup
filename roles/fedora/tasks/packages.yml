@@ -6,6 +6,7 @@
       - jq # Parse json files
       - stow # create symlinks for dotfiles
       - bat # nicer cat utility
+      - chafa # Pictures in the terminal
       - flatpak
       - git
       - gh # github cli
