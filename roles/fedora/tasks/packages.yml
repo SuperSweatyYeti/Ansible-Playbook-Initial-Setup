@@ -30,6 +30,7 @@
       - zsh-autosuggestions
       - btop
       - fzf
+      - zoxide # smarter cd
       - lsd # prettier 'ls' output with icons and colors
       - docker-ce # docker community edition
       - docker-compose-plugin
