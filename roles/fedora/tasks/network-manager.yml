@@ -29,6 +29,7 @@
         dest: /etc/NetworkManager/dispatcher.d/pre-up.d/90-global-dns-options
         content: |
           #!/bin/bash
+          # Add default dns extension options for all NetworkManager connections
           set -euo pipefail
 
           IFACE="${1:-}"
