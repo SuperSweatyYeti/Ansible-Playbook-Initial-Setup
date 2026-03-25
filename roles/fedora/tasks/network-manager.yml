@@ -1,0 +1,81 @@
+---
+
+- name: Ensure Default DNS handling method for NetworkManager
+  block:
+    - name: Ensure the [main] section exists in NetworkManager.conf
+      lineinfile:
+        path: /etc/NetworkManager/NetworkManager.conf
+        regexp: '^\[main\]'
+        line: '[main]'
+        state: present
+
+    - name: Ensure dns=default setting exists in [main] section
+      lineinfile:
+        path: /etc/NetworkManager/NetworkManager.conf
+        insertafter: '^\[main\]'
+        regexp: '^dns='
+        line: 'dns=default'
+        state: present
+
+
+    - name: Ensure the directory for dispatcher scripts exists
+      file:
+        path: /etc/NetworkManager/dispatcher.d/pre-up.d
+        state: directory
+        mode: '0755'
+
+    - name: Create the script to set global DNS options
+      copy:
+        dest: /etc/NetworkManager/dispatcher.d/pre-up.d/90-global-dns-options
+        content: |
+          #!/bin/bash
+          set -euo pipefail
+
+          IFACE="${1:-}"
+          ACTION="${2:-}"
+
+          case "$ACTION" in
+            pre-up|vpn-pre-up|up|vpn-up) ;;
+            *) exit 0 ;;
+          esac
+
+          CONN_ID="${CONNECTION_ID:-}"
+          [ -n "$CONN_ID" ] || exit 0
+
+          merge_opts () {
+            local family="$1"   # ipv4 or ipv6
+            local want_csv="edns0,trust-ad"
+
+            # Get current value (may be blank)
+            local cur
+            cur="$(nmcli -g ${family}.dns-options connection show "$CONN_ID" 2>/dev/null || true)"
+
+            # Build a merged CSV set (preserve existing tokens)
+            local merged="$cur"
+            IFS=',' read -ra want_arr <<< "$want_csv"
+            for opt in "${want_arr[@]}"; do
+              # add if not present as whole token
+              if [[ ",${merged}," != *",${opt},"* ]]; then
+                if [[ -z "$merged" ]]; then
+                  merged="$opt"
+                else
+                  merged="${merged},${opt}"
+                fi
+              fi
+            done
+
+            # Only write if changed (avoids needless churn)
+            if [[ "$merged" != "$cur" ]]; then
+              nmcli connection modify "$CONN_ID" ${family}.dns-options "$merged"
+            fi
+          }
+
+          merge_opts ipv4
+          merge_opts ipv6
+        mode: '0755'
+
+  tags:
+    - network
+    - network-manager
+
+

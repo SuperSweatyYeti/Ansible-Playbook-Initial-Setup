@@ -3,6 +3,7 @@
 - name: Include Fedora repo tasks
   include_tasks: repos.yml
 
+
 - name: Include Fedora DNF tasks
   include_tasks: dnf.yml
 
@@ -23,6 +24,9 @@
 
 - name: Include Fedora appimages tasks
   include_tasks: appimages.yml
+
+- name: Include Fedora NetworkManager tasks
+  include_tasks: network-manager.yml
 
 - name: Include Fedora user-groups tasks
   include_tasks: user-groups.yml
