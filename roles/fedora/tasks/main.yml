@@ -16,6 +16,9 @@
 - name: Include Fedora packages tasks
   include_tasks: packages.yml
 
+- name: Include Fedora obsidian headless sync tasks
+  include_tasks: obsidian-headless.yml
+
 - name: Include Fedora homebrew tasks
   include_tasks: homebrew.yml
 

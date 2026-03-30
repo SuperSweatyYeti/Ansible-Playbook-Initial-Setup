@@ -1,0 +1,9 @@
+---
+
+- name: Install obsidian-headless globally via npm
+  become: true
+  community.general.npm:
+    name: obsidian-headless
+    global: true
+    state: present
+
