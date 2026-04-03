@@ -12,6 +12,7 @@
       - gh # github cli
       - curl
       - neovim
+      - tree-sitter-cli
       # Neovim plugin dependencies
       - zip
       - unzip
