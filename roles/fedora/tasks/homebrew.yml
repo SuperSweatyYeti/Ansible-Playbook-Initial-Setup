@@ -47,4 +47,5 @@
     - lazydocker
     - yazi
     - anomalyco/tap/opencode
+    - rmpc
     state: present
