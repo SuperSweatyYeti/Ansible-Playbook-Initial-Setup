@@ -48,4 +48,5 @@
     - yazi
     - anomalyco/tap/opencode
     - rmpc
+    - herdr
     state: present
