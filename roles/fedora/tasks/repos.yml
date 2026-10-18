@@ -271,6 +271,25 @@
     group: root
     mode: '0644'
 
+- name: Add kde-final copr repo (disabled)
+  become: true
+  ansible.builtin.copy:
+    dest: "/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_kdesig:kde-final.repo"
+    content: |
+      [copr:copr.fedorainfracloud.org:group_kdesig:kde-final]
+      name=Copr repo for kde-final owned by @kdesig
+      baseurl=https://download.copr.fedorainfracloud.org/results/@kdesig/kde-final/fedora-$releasever-$basearch/
+      type=rpm-md
+      skip_if_unavailable=True
+      gpgcheck=1
+      gpgkey=https://download.copr.fedorainfracloud.org/results/@kdesig/kde-final/pubkey.gpg
+      repo_gpgcheck=0
+      enabled=0
+      enabled_metadata=1
+    owner: root
+    group: root
+    mode: "0644"
+
 # - name: Add Ghostty COPR repo
 #   become: true
 #   copy:
