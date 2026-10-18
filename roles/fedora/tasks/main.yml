@@ -10,6 +10,9 @@
 - name: Include Fedora keyd tasks
   include_tasks: keyd.yml
 
+- name: Include Fedora udev rules for ydotool as user tasks
+  include_tasks: ydotool.yml
+
 - name: Include Fedora fonts tasks
   include_tasks: fonts.yml
 

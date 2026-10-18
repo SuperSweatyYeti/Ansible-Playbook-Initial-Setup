@@ -1,0 +1,74 @@
+# Tasks: give a user access to /dev/uinput (for ydotool) via a udev rule + group.
+#
+# Usage as a role task file:   - ansible.builtin.import_tasks: uinput.yml
+# Requires the community.general collection (for the modprobe module).
+#
+# Override the target user with:  uinput_user: someone
+---
+- name: Set uinput defaults
+  ansible.builtin.set_fact:
+    uinput_user: "{{ uinput_user | default(ansible_facts['user_id']) }}"
+    uinput_group: "{{ uinput_group | default('uinput') }}"
+
+- name: Ensure the uinput group exists
+  ansible.builtin.group:
+    name: "{{ uinput_group }}"
+    state: present
+    system: true
+  become: true
+
+- name: Add user to the uinput group
+  ansible.builtin.user:
+    name: "{{ uinput_user }}"
+    groups: "{{ uinput_group }}"
+    append: true
+  become: true
+  register: uinput_user_result
+
+- name: Install udev rule for /dev/uinput
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/60-uinput.rules
+    content: |
+      KERNEL=="uinput", SUBSYSTEM=="misc", GROUP="{{ uinput_group }}", MODE="0660", OPTIONS+="static_node=uinput"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  register: uinput_udev_rule
+
+- name: Load uinput module at boot
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/uinput.conf
+    content: |
+      uinput
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+
+- name: Load uinput module now
+  community.general.modprobe:
+    name: uinput
+    state: present
+  become: true
+
+- name: Reload udev rules
+  ansible.builtin.command: udevadm control --reload-rules
+  become: true
+  when: uinput_udev_rule.changed
+  changed_when: true
+
+- name: Apply udev rule to /dev/uinput
+  ansible.builtin.command: udevadm trigger --name-match=uinput
+  become: true
+  when: uinput_udev_rule.changed
+  changed_when: true
+
+- name: Remind about re-login
+  ansible.builtin.debug:
+    msg: >-
+      Log out and back in (or reboot) so '{{ uinput_user }}' picks up the
+      '{{ uinput_group }}' group, then run:
+      systemctl --user reset-failed ydotool.service &&
+      systemctl --user restart ydotool.service
+  when: uinput_user_result.changed
